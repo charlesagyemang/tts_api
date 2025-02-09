@@ -59,7 +59,9 @@ async def text_to_speech(request: TextRequest = Body(...)):
         output_path = output_dir / "speech.wav"
 
         logging.info("🔵 Starting TTS job...")
-        success = await asyncio.wait_for(generate_tts(request.text, output_path), timeout=900)  # 15 min timeout
+
+        # ✅ Increase timeout to 1200 seconds (20 minutes)
+        success = await asyncio.wait_for(generate_tts(request.text, output_path), timeout=1200)
 
         if not success:
             raise HTTPException(status_code=500, detail="Coqui TTS failed to generate an audio file.")
@@ -74,6 +76,7 @@ async def text_to_speech(request: TextRequest = Body(...)):
     except Exception as e:
         logging.error(f"❌ Unexpected error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn
